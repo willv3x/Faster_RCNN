@@ -52,6 +52,23 @@ TRAIN_DATASET = PascalVOCDataset(
 
 print(f'Tamanho dataset de treino: {len(TRAIN_DATASET)}')
 
+
+data_loader = DataLoader(TRAIN_DATASET, batch_size=1, shuffle=True, num_workers=0, drop_last=True,
+                         collate_fn=lambda batch: tuple(zip(*batch)))
+
+images, targets = next(iter(data_loader))
+
+print(targets)
+
+
+
+
+
+
+
+
+
+
 VALIDATION_DATASET = PascalVOCDataset(
     images_folder='C:\ml\datasets\glicosimetros.v1i.coco\\valid',
     annotation_file='C:\ml\datasets\glicosimetros.v1i.coco\\valid\_annotations.coco.json',
@@ -72,9 +89,7 @@ print(f'Tamanho dataset de validação: {len(VALIDATION_DATASET)}')
 print(f'Tamanho dataset de teste: {len(TEST_DATASET)}')
 
 
-def get_train_loader(batch_size, num_workers):
-    return DataLoader(TRAIN_DATASET, batch_size=batch_size, shuffle=True, num_workers=num_workers, drop_last=True,
-                      collate_fn=lambda batch: tuple(zip(*batch)))
+
 
 
 def get_validation_loader(batch_size, num_workers):

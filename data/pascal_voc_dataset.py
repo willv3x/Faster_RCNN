@@ -46,7 +46,7 @@ class PascalVOCDataset(Dataset):
             y_max = int(annotation.find('bndbox').find('ymax').text)
 
             label = self._classes.index(annotation.find('name').text)
-            box = [x_min, x_max, y_min, y_max]
+            box = [x_min, y_min, x_max, y_max]
             area = (x_max - x_min) * (y_max - y_min)
             iscrowd = 0
 
