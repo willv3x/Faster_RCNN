@@ -1,13 +1,34 @@
 import albumentations
 import torch
+import wandb
 from albumentations.pytorch import ToTensorV2
 
-from data.data_loader import build_data_loader
+from data.data_loader import data_loader
 from data.pascal_voc_dataset import PascalVOCDataset
+from job.trainer import Trainer
+from model.faster_r_cnn_resnet_50_fpn_v2 import faster_r_cnn_resnet50_fpn_v2
 
+if __name__ == '__main__':
+    torch.manual_seed(42)
+    WANDB_ENTITY = "ah-visao"
+    MODEL_NAME = 'faster_r_cnn_resnet50_fpn_v2'
 
-def train():
-    print(torch.cuda.is_available())
+    wandb.login()
+
+    CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    NUM_CLASSES = len(CLASSES)
+    EPOCHS = 10
+    BATCH_SIZE = 1
+    NUM_WORKERS = 1
+    DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    BACKBONE_TRAINABLE_LAYERS = 5
+    MODEL = faster_r_cnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    MODEL.to(DEVICE)
+    MODEL_PARAMETERS = [p for p in MODEL.parameters() if p.requires_grad]
+    LEARN_RATE = 0.001
+    MOMENTUM = 0.9
+    WEIGHT_DECAY = 0.0005
+    OPTIMIZER = torch.optim.SGD(MODEL_PARAMETERS, lr=LEARN_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
 
     TRAIN_TRANSFORM = albumentations.Compose([
         ToTensorV2()
@@ -23,24 +44,50 @@ def train():
         label_fields=['labels']
     ))
 
-    INFERENCE_TRANSFORM = albumentations.Compose([
-        ToTensorV2()
-    ])
-
     TRAIN_DATASET = PascalVOCDataset(
         directory_path='C:\ml\datasets\glicosimetros-completo.v1i.voc\\train',
-        classes=['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
-    print(f'Tamanho dataset de treino: {len(TRAIN_DATASET)}')
+    VALIDATION_DATASET = PascalVOCDataset(
+        directory_path='C:\ml\datasets\glicosimetros-completo.v1i.voc\\train',
+        classes=CLASSES,
+        transforms=TEST_AND_VALIDATION_TRANSFORM
+    )
 
-    data_loader = build_data_loader(TRAIN_DATASET, 2, True, 2, True)
+    TRAIN_LOADER = data_loader(TRAIN_DATASET, BATCH_SIZE, True, NUM_WORKERS, True)
+    VALIDATION_LOADER = data_loader(VALIDATION_DATASET, BATCH_SIZE, True, NUM_WORKERS, True)
 
-    images, targets = next(iter(data_loader))
+    WANDB_CONFIG = {
+        "learn_rate": LEARN_RATE,
+        "momentum": MOMENTUM,
+        "weight_decay": WEIGHT_DECAY,
+        "optimizer": OPTIMIZER,
+        "epochs": EPOCHS,
+        "batch_size": BATCH_SIZE,
+        "device": DEVICE,
+        "backbone_trainable_layers": BACKBONE_TRAINABLE_LAYERS,
+        "trainable_parameters_count": len(MODEL_PARAMETERS),
+    }
 
-    print(targets)
+    RUN = wandb.init(
+        project=MODEL_NAME,
+        entity=WANDB_ENTITY,
+        config=WANDB_CONFIG,
+    )
+
+    wandb.watch(MODEL, log_freq=10)
+
+    print(f"\n\nIniciando treinamento usando PyTorch {torch.__version__} e dispositivo "
+          f"{torch.cuda.get_device_properties(0).name if torch.cuda.is_available() else 'CPU'}\n")
+
+    epoch_train_losses, epoch_validation_metrics, log = \
+        Trainer().train(MODEL, EPOCHS, DEVICE, OPTIMIZER, TRAIN_LOADER, VALIDATION_LOADER)
 
 
-if __name__ == '__main__':
-    train()
+
+    RUN_ARTIFACT = wandb.Artifact(wandb.run.name, type='model')
+    RUN_ARTIFACT.add_file('best.pt')
+    RUN.log_artifact(RUN_ARTIFACT)
+
