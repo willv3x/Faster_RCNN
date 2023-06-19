@@ -13,3 +13,7 @@ def faster_r_cnn_resnet50_fpn_v2(num_classes, trainable_backbone_layers):
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 
     return model
+
+
+if __name__ == '__main__':
+    print('hi')

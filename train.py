@@ -4,7 +4,7 @@ import wandb
 from albumentations.pytorch import ToTensorV2
 
 from data.data_loader import data_loader
-from data.pascal_voc_dataset import PascalVOCDataset
+from data.eager_pascal_voc_dataset import EagerPascalVOCDataset
 from job.trainer import Trainer
 from model.faster_r_cnn_resnet_50_fpn_v2 import faster_r_cnn_resnet50_fpn_v2
 
@@ -17,9 +17,9 @@ if __name__ == '__main__':
 
     CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     NUM_CLASSES = len(CLASSES)
-    EPOCHS = 10
-    BATCH_SIZE = 1
-    NUM_WORKERS = 1
+    EPOCHS = 60
+    BATCH_SIZE = 2
+    NUM_WORKERS = 5
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     BACKBONE_TRAINABLE_LAYERS = 5
     MODEL = faster_r_cnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
@@ -44,20 +44,20 @@ if __name__ == '__main__':
         label_fields=['labels']
     ))
 
-    TRAIN_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\glicosimetros-completo.v1i.voc\\train',
+    TRAIN_DATASET = EagerPascalVOCDataset(
+        directory_path='C:\ml\datasets\oximetro.v1i.voc\\train',
         classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
-    VALIDATION_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\glicosimetros-completo.v1i.voc\\train',
+    VALIDATION_DATASET = EagerPascalVOCDataset(
+        directory_path='C:\ml\datasets\oximetro.v1i.voc\\valid',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
 
     TRAIN_LOADER = data_loader(TRAIN_DATASET, BATCH_SIZE, True, NUM_WORKERS, True)
-    VALIDATION_LOADER = data_loader(VALIDATION_DATASET, BATCH_SIZE, True, NUM_WORKERS, True)
+    VALIDATION_LOADER = data_loader(VALIDATION_DATASET, 1, True, NUM_WORKERS, True)
 
     WANDB_CONFIG = {
         "learn_rate": LEARN_RATE,
@@ -85,9 +85,8 @@ if __name__ == '__main__':
     epoch_train_losses, epoch_validation_metrics, log = \
         Trainer().train(MODEL, EPOCHS, DEVICE, OPTIMIZER, TRAIN_LOADER, VALIDATION_LOADER)
 
-
-
     RUN_ARTIFACT = wandb.Artifact(wandb.run.name, type='model')
-    RUN_ARTIFACT.add_file('best.pt')
+    RUN_ARTIFACT.add_file('best_train_model.pt')
+    RUN_ARTIFACT.add_file('best_validation_model.pt')
     RUN.log_artifact(RUN_ARTIFACT)
 

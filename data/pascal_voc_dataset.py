@@ -18,8 +18,6 @@ class PascalVOCDataset(Dataset):
         self._images_file_names = [image_path.split(os.path.sep)[-1] for image_path in self._images_paths]
         self._images_file_names = sorted(self._images_file_names)
 
-        print(len(self._images_file_names))
-
     def __getitem__(self, index):
         image_file_name = self._images_file_names[index]
         image_file_path = os.path.join(self._directory_path, image_file_name)
@@ -73,3 +71,7 @@ class PascalVOCDataset(Dataset):
 
     def __len__(self):
         return len(self._images_file_names)
+
+
+if __name__ == '__main__':
+    print('hi')
