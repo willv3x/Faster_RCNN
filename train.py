@@ -4,7 +4,7 @@ import wandb
 from albumentations.pytorch import ToTensorV2
 
 from data.data_loader import data_loader
-from data.eager_pascal_voc_dataset import EagerPascalVOCDataset
+from data.pascal_voc_dataset import PascalVOCDataset
 from job.trainer import Trainer
 from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
@@ -44,13 +44,13 @@ if __name__ == '__main__':
         label_fields=['labels']
     ))
 
-    TRAIN_DATASET = EagerPascalVOCDataset(
+    TRAIN_DATASET = PascalVOCDataset(
         directory_path='C:\ml\datasets\oximetro.v1i.voc\\train',
         classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
-    VALIDATION_DATASET = EagerPascalVOCDataset(
+    VALIDATION_DATASET = PascalVOCDataset(
         directory_path='C:\ml\datasets\oximetro.v1i.voc\\valid',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
