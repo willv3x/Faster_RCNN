@@ -6,8 +6,9 @@ from util.utils import save_model
 
 
 class Trainer:
-    def __init__(self):
+    def __init__(self, train_name='best'):
         self._best_epoch_loss = None
+        self._train_name = train_name
 
     def train_one_epoch(self, model, device, optimizer, train_loader, epoch):
         model.train()
@@ -74,12 +75,12 @@ class Trainer:
         if self._best_epoch_loss is None or train_data['train/loss'] < self._best_epoch_loss:
             self._best_epoch_loss = train_data['train/loss']
             print(f"Saving model with best epoch train loss: {train_data['train/loss']} (at epoch {epoch})")
-            save_model(model, 'best_train_model')
+            save_model(model, f'{self._train_name}_loss')
 
         return train_data
 
     def train(self, model, epochs, device, optimizer, train_loader, validation_loader=None):
-        validator = Validator()
+        validator = Validator(validation_name=self._train_name)
         log = {}
 
         epoch_train_losses = []

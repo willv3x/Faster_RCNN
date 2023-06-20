@@ -11,7 +11,7 @@ from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 if __name__ == '__main__':
     torch.manual_seed(42)
     WANDB_ENTITY = "ah-visao"
-    MODEL_NAME = 'fasterrcnn_resnet50_fpn_v2'
+    MODEL_NAME = 'fasterrcnn_resnet50_fpn_v2_oximetro'
 
     wandb.login()
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
           f"{torch.cuda.get_device_properties(0).name if torch.cuda.is_available() else 'CPU'}\n")
 
     epoch_train_losses, epoch_validation_metrics, log = \
-        Trainer().train(MODEL, EPOCHS, DEVICE, OPTIMIZER, TRAIN_LOADER, VALIDATION_LOADER)
+        Trainer(MODEL_NAME).train(MODEL, EPOCHS, DEVICE, OPTIMIZER, TRAIN_LOADER, VALIDATION_LOADER)
 
     RUN_ARTIFACT = wandb.Artifact(wandb.run.name, type='model')
     RUN_ARTIFACT.add_file('best_train_model.pt')

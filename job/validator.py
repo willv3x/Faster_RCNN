@@ -6,8 +6,9 @@ from util.utils import save_model
 
 
 class Validator:
-    def __init__(self):
+    def __init__(self, validation_name='best'):
         self._best_epoch_validation_metric = None
+        self._validation_name = validation_name
 
     def validate_one_epoch(self, model, device, validation_loader, epoch):
         model.eval()
@@ -78,6 +79,6 @@ class Validator:
             self._best_epoch_validation_metric = validation_data['metrics/mAP_0.5:0.95']
             print(f"Saving model with best epoch validation mAP_0.5:0.95: {validation_data['metrics/mAP_0.5:0.95']} "
                   f"(at epoch {epoch})")
-            save_model(model, 'best_validation_model')
+            save_model(model, f'{self._validation_name}_map0595')
 
         return validation_data
