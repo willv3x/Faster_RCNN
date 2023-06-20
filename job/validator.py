@@ -81,7 +81,3 @@ class Validator:
             save_model(model, 'best_validation_model')
 
         return validation_data
-
-
-if __name__ == '__main__':
-    print('hi')

@@ -11,13 +11,13 @@ from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 if __name__ == '__main__':
     torch.manual_seed(42)
     WANDB_ENTITY = "ah-visao"
-    MODEL_NAME = 'faster_r_cnn_resnet50_fpn_v2'
+    MODEL_NAME = 'fasterrcnn_resnet50_fpn_v2'
 
     wandb.login()
 
     CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     NUM_CLASSES = len(CLASSES)
-    EPOCHS = 60
+    EPOCHS = 120
     BATCH_SIZE = 2
     NUM_WORKERS = 5
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -45,13 +45,13 @@ if __name__ == '__main__':
     ))
 
     TRAIN_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\oximetro.v1i.voc\\train',
+        directory_path='C:\ml\datasets\oximetro.v2i.voc\\train',
         classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
     VALIDATION_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\oximetro.v1i.voc\\valid',
+        directory_path='C:\ml\datasets\oximetro.v2i.voc\\valid',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
@@ -89,4 +89,3 @@ if __name__ == '__main__':
     RUN_ARTIFACT.add_file('best_train_model.pt')
     RUN_ARTIFACT.add_file('best_validation_model.pt')
     RUN.log_artifact(RUN_ARTIFACT)
-

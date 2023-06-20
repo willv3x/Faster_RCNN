@@ -105,7 +105,3 @@ class Trainer:
             wandb.log(log)
 
         return epoch_train_losses, epoch_validation_metrics, log
-
-
-if __name__ == '__main__':
-    print('hi')
