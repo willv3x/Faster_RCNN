@@ -6,7 +6,7 @@ from albumentations.pytorch import ToTensorV2
 from data.data_loader import data_loader
 from data.eager_pascal_voc_dataset import EagerPascalVOCDataset
 from job.trainer import Trainer
-from model.faster_r_cnn_resnet_50_fpn_v2 import faster_r_cnn_resnet50_fpn_v2
+from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
 if __name__ == '__main__':
     torch.manual_seed(42)
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     NUM_WORKERS = 5
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     BACKBONE_TRAINABLE_LAYERS = 5
-    MODEL = faster_r_cnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
     MODEL.to(DEVICE)
     MODEL_PARAMETERS = [p for p in MODEL.parameters() if p.requires_grad]
     LEARN_RATE = 0.001
