@@ -16,7 +16,7 @@ if __name__ == '__main__':
     NUM_WORKERS = 5
 
     MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, 5)
-    MODEL.load_state_dict(torch.load('best_validation_model.pt', map_location=DEVICE))
+    MODEL.load_state_dict(torch.load('best_map.pt', map_location=DEVICE))
 
     MODEL.to(DEVICE)
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     ))
 
     TEST_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\oximetro.v2i.voc\\test',
+        directory_path='C:\ml\datasets\oximetro-kaggle.v2i.voc\\train',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )

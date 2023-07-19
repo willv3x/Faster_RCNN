@@ -10,16 +10,18 @@ from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
 if __name__ == '__main__':
     torch.manual_seed(42)
-    WANDB_ENTITY = "ah-visao"
-    MODEL_NAME = 'fasterrcnn_resnet50_fpn_v2_oximetro'
+    # WANDB_ENTITY = "ah-visao"
+    PROJECT = 'fasterrcnn_resnet50_fpn_v2'
+    NAME = 'train-gl_full'
+
 
     wandb.login()
 
     CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     NUM_CLASSES = len(CLASSES)
-    EPOCHS = 120
-    BATCH_SIZE = 2
-    NUM_WORKERS = 5
+    EPOCHS = 300
+    BATCH_SIZE = 4
+    NUM_WORKERS = 8
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     BACKBONE_TRAINABLE_LAYERS = 5
     MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
@@ -45,19 +47,19 @@ if __name__ == '__main__':
     ))
 
     TRAIN_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\oximetro.v2i.voc\\train',
+        directory_path='C:\ml\datasets\gl_full.voc\\train',
         classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
     VALIDATION_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\oximetro.v2i.voc\\valid',
+        directory_path='C:\ml\datasets\gl_full.voc\\valid',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
 
     TRAIN_LOADER = data_loader(TRAIN_DATASET, BATCH_SIZE, True, NUM_WORKERS, True)
-    VALIDATION_LOADER = data_loader(VALIDATION_DATASET, 1, True, NUM_WORKERS, True)
+    VALIDATION_LOADER = data_loader(VALIDATION_DATASET, BATCH_SIZE, True, NUM_WORKERS, True)
 
     WANDB_CONFIG = {
         "learn_rate": LEARN_RATE,
@@ -69,11 +71,13 @@ if __name__ == '__main__':
         "device": DEVICE,
         "backbone_trainable_layers": BACKBONE_TRAINABLE_LAYERS,
         "trainable_parameters_count": len(MODEL_PARAMETERS),
+        "workers": NUM_WORKERS,
     }
 
     RUN = wandb.init(
-        project=MODEL_NAME,
-        entity=WANDB_ENTITY,
+        # entity=WANDB_ENTITY,
+        project=PROJECT,
+        name=NAME,
         config=WANDB_CONFIG,
     )
 
@@ -83,9 +87,9 @@ if __name__ == '__main__':
           f"{torch.cuda.get_device_properties(0).name if torch.cuda.is_available() else 'CPU'}\n")
 
     epoch_train_losses, epoch_validation_metrics, log = \
-        Trainer(MODEL_NAME).train(MODEL, EPOCHS, DEVICE, OPTIMIZER, TRAIN_LOADER, VALIDATION_LOADER)
+        Trainer().train(MODEL, EPOCHS, DEVICE, OPTIMIZER, TRAIN_LOADER, VALIDATION_LOADER)
 
     RUN_ARTIFACT = wandb.Artifact(wandb.run.name, type='model')
-    RUN_ARTIFACT.add_file('best_train_model.pt')
-    RUN_ARTIFACT.add_file('best_validation_model.pt')
+    RUN_ARTIFACT.add_file('best_loss.pt')
+    RUN_ARTIFACT.add_file('best_map.pt')
     RUN.log_artifact(RUN_ARTIFACT)
