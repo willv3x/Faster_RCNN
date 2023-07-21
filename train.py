@@ -6,30 +6,37 @@ from albumentations.pytorch import ToTensorV2
 from data.data_loader import data_loader
 from data.pascal_voc_dataset import PascalVOCDataset
 from job.trainer import Trainer
+from model.fasterrcnn_resnet50_fpn import fasterrcnn_resnet50_fpn
 from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
 if __name__ == '__main__':
     torch.manual_seed(42)
     # WANDB_ENTITY = "ah-visao"
-    PROJECT = 'fasterrcnn_resnet50_fpn_v2'
-    NAME = 'train-gl_full'
 
+    # PROJECT = 'fasterrcnn_resnet50_fpn_v2'
+    PROJECT = 'fasterrcnn_resnet50_fpn'
+
+    NAME = 'train-gl_full'
 
     wandb.login()
 
+    LEARN_RATE = 0.003
+    MOMENTUM = 0.937
+    WEIGHT_DECAY = 0.0005
+    EPOCHS = 150
+    BATCH_SIZE = 2
+    NUM_WORKERS = 10
+    BACKBONE_TRAINABLE_LAYERS = 5
+    DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
     CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     NUM_CLASSES = len(CLASSES)
-    EPOCHS = 300
-    BATCH_SIZE = 4
-    NUM_WORKERS = 8
-    DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    BACKBONE_TRAINABLE_LAYERS = 5
-    MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+
+    # MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+
     MODEL.to(DEVICE)
     MODEL_PARAMETERS = [p for p in MODEL.parameters() if p.requires_grad]
-    LEARN_RATE = 0.001
-    MOMENTUM = 0.9
-    WEIGHT_DECAY = 0.0005
     OPTIMIZER = torch.optim.SGD(MODEL_PARAMETERS, lr=LEARN_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
 
     TRAIN_TRANSFORM = albumentations.Compose([

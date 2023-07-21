@@ -79,6 +79,6 @@ class Validator:
             self._best_epoch_validation_metric = validation_data['metrics/mAP_0.5:0.95']
             print(f"Saving model with best epoch validation mAP_0.5:0.95: {validation_data['metrics/mAP_0.5:0.95']} "
                   f"(at epoch {epoch})")
-            save_model(model, f'{self._validation_name}_map0595')
+            save_model(model, f'{self._validation_name}_map')
 
         return validation_data

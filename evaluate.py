@@ -5,6 +5,7 @@ from albumentations.pytorch import ToTensorV2
 from data.data_loader import data_loader
 from data.pascal_voc_dataset import PascalVOCDataset
 from job.evaluator import Evaluator
+from model.fasterrcnn_resnet50_fpn import fasterrcnn_resnet50_fpn
 from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
 if __name__ == '__main__':
@@ -13,11 +14,12 @@ if __name__ == '__main__':
     CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     NUM_CLASSES = len(CLASSES)
 
-    NUM_WORKERS = 5
+    NUM_WORKERS = 10
 
-    MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, 5)
+    # MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, 5)
+    MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, 5)
+
     MODEL.load_state_dict(torch.load('best_map.pt', map_location=DEVICE))
-
     MODEL.to(DEVICE)
 
     TEST_AND_VALIDATION_TRANSFORM = albumentations.Compose([
@@ -28,7 +30,7 @@ if __name__ == '__main__':
     ))
 
     TEST_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\oximetro-kaggle.v2i.voc\\train',
+        directory_path='C:\ml\datasets\gl_full.voc\\test',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
