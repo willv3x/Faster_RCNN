@@ -5,6 +5,8 @@ from albumentations.pytorch import ToTensorV2
 from data.data_loader import data_loader
 from data.pascal_voc_dataset import PascalVOCDataset
 from job.evaluator import Evaluator
+from model.fasterrcnn_mobilenet_v3_large_320_fpn import fasterrcnn_mobilenet_v3_large_320_fpn
+from model.fasterrcnn_mobilenet_v3_large_fpn import fasterrcnn_mobilenet_v3_large_fpn
 from model.fasterrcnn_resnet50_fpn import fasterrcnn_resnet50_fpn
 from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
@@ -17,7 +19,9 @@ if __name__ == '__main__':
     NUM_WORKERS = 10
 
     # MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, 5)
-    MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, 5)
+    # MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, 5)
+    # MODEL = fasterrcnn_mobilenet_v3_large_fpn(NUM_CLASSES, 6)
+    MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, 6)
 
     MODEL.load_state_dict(torch.load('best_map.pt', map_location=DEVICE))
     MODEL.to(DEVICE)

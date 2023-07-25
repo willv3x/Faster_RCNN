@@ -6,6 +6,8 @@ from albumentations.pytorch import ToTensorV2
 from data.data_loader import data_loader
 from data.pascal_voc_dataset import PascalVOCDataset
 from job.trainer import Trainer
+from model.fasterrcnn_mobilenet_v3_large_320_fpn import fasterrcnn_mobilenet_v3_large_320_fpn
+from model.fasterrcnn_mobilenet_v3_large_fpn import fasterrcnn_mobilenet_v3_large_fpn
 from model.fasterrcnn_resnet50_fpn import fasterrcnn_resnet50_fpn
 from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
@@ -14,7 +16,9 @@ if __name__ == '__main__':
     # WANDB_ENTITY = "ah-visao"
 
     # PROJECT = 'fasterrcnn_resnet50_fpn_v2'
-    PROJECT = 'fasterrcnn_resnet50_fpn'
+    # PROJECT = 'fasterrcnn_resnet50_fpn'
+    # PROJECT = 'fasterrcnn_mobilenet_v3_large_fpn'
+    PROJECT = 'fasterrcnn_mobilenet_v3_large_320_fpn'
 
     NAME = 'train-gl_full'
 
@@ -26,14 +30,17 @@ if __name__ == '__main__':
     EPOCHS = 150
     BATCH_SIZE = 2
     NUM_WORKERS = 10
-    BACKBONE_TRAINABLE_LAYERS = 5
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     NUM_CLASSES = len(CLASSES)
 
+    # BACKBONE_TRAINABLE_LAYERS = 5
     # MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
-    MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    # MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    BACKBONE_TRAINABLE_LAYERS = 6
+    # MODEL = fasterrcnn_mobilenet_v3_large_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
 
     MODEL.to(DEVICE)
     MODEL_PARAMETERS = [p for p in MODEL.parameters() if p.requires_grad]
