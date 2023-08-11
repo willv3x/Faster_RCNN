@@ -2,6 +2,7 @@ import albumentations
 import torch
 from albumentations.pytorch import ToTensorV2
 
+from job.predictor import visualize_inferences
 from model.fasterrcnn_resnet50_fpn_v2 import fasterrcnn_resnet50_fpn_v2
 
 if __name__ == '__main__':
@@ -21,3 +22,11 @@ if __name__ == '__main__':
         ToTensorV2()
     ])
 
+    images_paths = [
+        'inferencia01.jpg',
+        'inferencia02.jpg',
+        'inferencia03.jpg',
+        'inferencia04.jpg',
+    ]
+
+    visualize_inferences(MODEL, DEVICE, images_paths, INFERENCE_TRANSFORM)
