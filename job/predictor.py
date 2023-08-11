@@ -1,14 +1,6 @@
 import cv2
 import numpy as np
 import torch
-import albumentations
-from albumentations.pytorch import ToTensorV2
-
-INFERENCE_TRANSFORM = albumentations.Compose([
-    ToTensorV2()
-])
-
-
 
 
 def visualize_inferences(model, device, images_paths, transform, detection_threshold=0.75):

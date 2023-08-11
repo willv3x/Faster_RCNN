@@ -25,6 +25,7 @@ if __name__ == '__main__':
 
     MODEL.load_state_dict(torch.load('fasterrcnn_resnet50_fpn-ox_1080/train-ox_1080/best_map.pt', map_location=DEVICE))
     MODEL.to(DEVICE)
+    MODEL.eval()
 
     TEST_AND_VALIDATION_TRANSFORM = albumentations.Compose([
         ToTensorV2()
