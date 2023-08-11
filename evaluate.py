@@ -18,12 +18,12 @@ if __name__ == '__main__':
 
     NUM_WORKERS = 10
 
-    # MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, 5)
-    # MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, 5)
+    #MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, 5)
+    MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, 5)
     # MODEL = fasterrcnn_mobilenet_v3_large_fpn(NUM_CLASSES, 6)
-    MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, 6)
+    # MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, 6)
 
-    MODEL.load_state_dict(torch.load('best_map.pt', map_location=DEVICE))
+    MODEL.load_state_dict(torch.load('fasterrcnn_resnet50_fpn-ox_1080/train-ox_1080/best_map.pt', map_location=DEVICE))
     MODEL.to(DEVICE)
 
     TEST_AND_VALIDATION_TRANSFORM = albumentations.Compose([
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     ))
 
     TEST_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\gl_full.voc\\test',
+        directory_path='C:\ml\datasets\ox_real_1280_test.voc\\test',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
@@ -43,4 +43,4 @@ if __name__ == '__main__':
 
     EVALUATION_MAP = Evaluator().evaluate(MODEL, DEVICE, TEST_LOADER)
 
-    Evaluator().plotEvaluationMap(EVALUATION_MAP, CLASSES)
+    Evaluator().plot_evaluation_map(EVALUATION_MAP, CLASSES)

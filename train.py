@@ -16,18 +16,18 @@ if __name__ == '__main__':
     # WANDB_ENTITY = "ah-visao"
 
     # PROJECT = 'fasterrcnn_resnet50_fpn_v2'
-    # PROJECT = 'fasterrcnn_resnet50_fpn'
+    PROJECT = 'fasterrcnn_resnet50_fpn'
     # PROJECT = 'fasterrcnn_mobilenet_v3_large_fpn'
-    PROJECT = 'fasterrcnn_mobilenet_v3_large_320_fpn'
+    # PROJECT = 'fasterrcnn_mobilenet_v3_large_320_fpn'
 
-    NAME = 'train-gl_full'
+    NAME = 'train-ox_1080'
 
     wandb.login()
 
-    LEARN_RATE = 0.003
+    LEARN_RATE = 0.01
     MOMENTUM = 0.937
     WEIGHT_DECAY = 0.0005
-    EPOCHS = 150
+    EPOCHS = 80
     BATCH_SIZE = 2
     NUM_WORKERS = 10
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -35,16 +35,23 @@ if __name__ == '__main__':
     CLASSES = ['__background__', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     NUM_CLASSES = len(CLASSES)
 
-    # BACKBONE_TRAINABLE_LAYERS = 5
-    # MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
-    # MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
-    BACKBONE_TRAINABLE_LAYERS = 6
+    BACKBONE_TRAINABLE_LAYERS = 5
+    MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    #MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    # BACKBONE_TRAINABLE_LAYERS = 6
     # MODEL = fasterrcnn_mobilenet_v3_large_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
-    MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    # MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
 
     MODEL.to(DEVICE)
     MODEL_PARAMETERS = [p for p in MODEL.parameters() if p.requires_grad]
     OPTIMIZER = torch.optim.SGD(MODEL_PARAMETERS, lr=LEARN_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
+
+    AUG_TRAIN_TRANSFORM = albumentations.Compose([
+        ToTensorV2()
+    ], bbox_params=albumentations.BboxParams(
+        format='pascal_voc',
+        label_fields=['labels']
+    ))
 
     TRAIN_TRANSFORM = albumentations.Compose([
         ToTensorV2()
@@ -61,13 +68,13 @@ if __name__ == '__main__':
     ))
 
     TRAIN_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\gl_full.voc\\train',
+        directory_path='C:\ml\datasets\ox_1080.voc\\train',
         classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
     VALIDATION_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\gl_full.voc\\valid',
+        directory_path='C:\ml\datasets\ox_1080.voc\\valid',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
@@ -107,3 +114,5 @@ if __name__ == '__main__':
     RUN_ARTIFACT.add_file('best_loss.pt')
     RUN_ARTIFACT.add_file('best_map.pt')
     RUN.log_artifact(RUN_ARTIFACT)
+
+    wandb.finish()
