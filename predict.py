@@ -29,4 +29,4 @@ if __name__ == '__main__':
         'inferencia04.jpg',
     ]
 
-    visualize_inferences(MODEL, DEVICE, images_paths, INFERENCE_TRANSFORM)
+    visualize_inferences(MODEL, DEVICE, images_paths, INFERENCE_TRANSFORM, CLASSES)
