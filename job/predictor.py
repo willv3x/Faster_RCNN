@@ -63,4 +63,5 @@ def visualize_inferences(model, device, images_paths, transform, classes, detect
     for i, (image, prediction) in enumerate(zip(images, predictions)):
         image = draw_boxes(image, prediction, classes)
 
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         cv2.imwrite(f"predicted{i + 1}.jpg", image * 255.0)
