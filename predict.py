@@ -1,3 +1,5 @@
+import os
+
 import albumentations
 import torch
 from albumentations.pytorch import ToTensorV2
@@ -22,11 +24,15 @@ if __name__ == '__main__':
         ToTensorV2()
     ])
 
-    images_paths = [
-        'inferencia01.jpg',
-        'inferencia02.jpg',
-        'inferencia03.jpg',
-        'inferencia04.jpg',
-    ]
+    directory = 'C:\ml\datasets\ox_real_1280_test.yolov5pytorch\\test\images'
 
-    visualize_inferences(MODEL, DEVICE, images_paths, INFERENCE_TRANSFORM, CLASSES)
+    images = []
+
+    for dirname, _, filenames in os.walk(directory):
+        for filename in filenames:
+            file_path = os.path.join(dirname, filename)
+            images.append(file_path)
+
+    print(images)
+
+    visualize_inferences(MODEL, DEVICE, images, INFERENCE_TRANSFORM, CLASSES)
