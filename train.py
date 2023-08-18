@@ -15,19 +15,19 @@ if __name__ == '__main__':
     torch.manual_seed(42)
     # WANDB_ENTITY = "ah-visao"
 
-    # PROJECT = 'fasterrcnn_resnet50_fpn_v2'
-    PROJECT = 'fasterrcnn_resnet50_fpn'
+    PROJECT = 'fasterrcnn_resnet50_fpn_v2-ox_full'
+    # PROJECT = 'fasterrcnn_resnet50_fpn'
     # PROJECT = 'fasterrcnn_mobilenet_v3_large_fpn'
     # PROJECT = 'fasterrcnn_mobilenet_v3_large_320_fpn'
 
-    NAME = 'train-ox_1080'
+    NAME = 'train'
 
     wandb.login()
 
-    LEARN_RATE = 0.01
+    LEARN_RATE = 0.03
     MOMENTUM = 0.937
     WEIGHT_DECAY = 0.0005
-    EPOCHS = 80
+    EPOCHS = 150
     BATCH_SIZE = 2
     NUM_WORKERS = 10
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -36,8 +36,8 @@ if __name__ == '__main__':
     NUM_CLASSES = len(CLASSES)
 
     BACKBONE_TRAINABLE_LAYERS = 5
-    MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
-    #MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    # MODEL = fasterrcnn_resnet50_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
+    MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
     # BACKBONE_TRAINABLE_LAYERS = 6
     # MODEL = fasterrcnn_mobilenet_v3_large_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
     # MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, BACKBONE_TRAINABLE_LAYERS)
@@ -68,13 +68,13 @@ if __name__ == '__main__':
     ))
 
     TRAIN_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\ox_1080.voc\\train',
+        directory_path='C:\ml\datasets\ox_full.voc\\train',
         classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
     VALIDATION_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\ox_1080.voc\\valid',
+        directory_path='C:\ml\datasets\ox_full.voc\\valid',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )

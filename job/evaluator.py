@@ -27,7 +27,7 @@ class Evaluator:
             print('-'*40)
             print(f"|m{metric_name}{empty_string:<12} | {np.array(metric_total):.4f}{empty_string:<15}|")
 
-    def plotEvaluationMap(self, evaluation_summary, classes):
+    def plot_evaluation_map(self, evaluation_summary, classes):
         print(f"Classes: {classes}")
 
         print('\n')
