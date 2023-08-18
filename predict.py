@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     MODEL = fasterrcnn_resnet50_fpn_v2(NUM_CLASSES, 5)
     MODEL.load_state_dict(
-        torch.load('fasterrcnn_resnet50_fpn_v2-ox_1080/train-ox_1080/best_map.pt', map_location=DEVICE))
+        torch.load('fasterrcnn_resnet50_fpn_v2-ox_full/train/best_map.pt', map_location=DEVICE))
     MODEL.to(DEVICE)
     MODEL.eval()
 
@@ -24,7 +24,7 @@ if __name__ == '__main__':
         ToTensorV2()
     ])
 
-    directory = 'C:\ml\datasets\ox_real_1280_test.yolov5pytorch\\test\images'
+    directory = 'C:\ml\datasets\ox_kag_1280_test.yolov5pytorch\\test\images'
 
     images = []
 

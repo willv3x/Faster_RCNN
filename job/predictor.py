@@ -33,35 +33,34 @@ def draw_boxes(image, target, classes):
 
 
 def visualize_inferences(model, device, images_paths, transform, classes, detection_threshold=0.75):
-    images = []
-    for image_path in images_paths:
+    for i, image_path in enumerate(images_paths):
         image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = image.astype(np.float32) / 255
         image = transform(image=image)['image']
         image = image.to(device)
-        images.append(image)
 
-    with torch.no_grad():
-        outputs = model(images)
+        with torch.no_grad():
+            outputs = model([image])
 
-    predictions = []
-    for output in outputs:
-        boxes = output['boxes'].detach().cpu()
-        labels = output['labels'].detach().cpu()
-        scores = output['scores'].detach().cpu()
+        predictions = []
 
-        boxes = boxes[scores >= detection_threshold]
+        for output in outputs:
+            boxes = output['boxes'].detach().cpu()
+            labels = output['labels'].detach().cpu()
+            scores = output['scores'].detach().cpu()
 
-        prediction = {
-            'boxes': boxes,
-            'labels': labels,
-            'scores': scores
-        }
-        predictions.append(prediction)
+            boxes = boxes[scores >= detection_threshold]
 
-    for i, (image, prediction) in enumerate(zip(images, predictions)):
-        image = draw_boxes(image, prediction, classes)
+            prediction = {
+                'boxes': boxes,
+                'labels': labels,
+                'scores': scores
+            }
+            predictions.append(prediction)
 
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        cv2.imwrite(f"predicted{i + 1}.jpg", image * 255.0)
+        for image, prediction in zip([image], predictions):
+            image = draw_boxes(image, prediction, classes)
+
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            cv2.imwrite(f"predicted{i + 1}.jpg", image * 255.0)
