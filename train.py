@@ -15,7 +15,7 @@ if __name__ == '__main__':
     torch.manual_seed(42)
     # WANDB_ENTITY = "ah-visao"
 
-    PROJECT = 'fasterrcnn_resnet50_fpn_v2-ox_full'
+    PROJECT = 'fasterrcnn_resnet50_fpn_v2-ox_real_aug10'
     # PROJECT = 'fasterrcnn_resnet50_fpn'
     # PROJECT = 'fasterrcnn_mobilenet_v3_large_fpn'
     # PROJECT = 'fasterrcnn_mobilenet_v3_large_320_fpn'
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     LEARN_RATE = 0.03
     MOMENTUM = 0.937
     WEIGHT_DECAY = 0.0005
-    EPOCHS = 150
+    EPOCHS = 100
     BATCH_SIZE = 2
     NUM_WORKERS = 10
     DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -68,13 +68,13 @@ if __name__ == '__main__':
     ))
 
     TRAIN_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\ox_full.voc\\train',
+        directory_path='C:\ml\datasets\ox_real_aug10.v2-1280.voc\\train',
         classes=CLASSES,
         transforms=TRAIN_TRANSFORM
     )
 
     VALIDATION_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\ox_full.voc\\valid',
+        directory_path='C:\ml\datasets\ox_real_aug10.v2-1280.voc\\valid',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
