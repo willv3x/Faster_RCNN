@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # MODEL = fasterrcnn_mobilenet_v3_large_fpn(NUM_CLASSES, 6)
     # MODEL = fasterrcnn_mobilenet_v3_large_320_fpn(NUM_CLASSES, 6)
 
-    MODEL.load_state_dict(torch.load('fasterrcnn_resnet50_fpn_v2-ox_full/train/best_map.pt', map_location=DEVICE))
+    MODEL.load_state_dict(torch.load('fasterrcnn_resnet50_fpn_v2-ox_real_aug10/train/best_map.pt', map_location=DEVICE))
     MODEL.to(DEVICE)
     MODEL.eval()
 
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     ))
 
     TEST_DATASET = PascalVOCDataset(
-        directory_path='C:\ml\datasets\ox_kag_1280_test.voc\\test',
+        directory_path='C:\ml\datasets\ox_real_aug10.v2-1280.voc\\test',
         classes=CLASSES,
         transforms=TEST_AND_VALIDATION_TRANSFORM
     )
