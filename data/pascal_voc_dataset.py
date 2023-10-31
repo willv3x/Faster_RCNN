@@ -72,6 +72,10 @@ class PascalVOCDataset(Dataset):
             'area': torch.as_tensor(annotations_data['area'], dtype=torch.float32),
             'iscrowd': torch.as_tensor(annotations_data['iscrowd'], dtype=torch.int64)
         }
+
+        if target['boxes'].size() == torch.Size([0]):
+            target['boxes'] = torch.zeros(0, 4)
+
         return image, target
 
     def __len__(self):
